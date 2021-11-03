@@ -22,7 +22,7 @@ func initRoute(s httpserver.Server) {
 		c.JSON(struct {
 			Message string `json:"message"`
 		}{
-			Message: "hi trip, 你好, 校车通",
+			Message: "hi trip, hi, 校车通",
 		}, nil)
 	})
 
