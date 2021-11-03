@@ -18,5 +18,13 @@ func initRoute(s httpserver.Server) {
 		}, nil)
 	})
 
+	s.GET("/hi", func(c *httpserver.Context) {
+		c.JSON(struct {
+			Message string `json:"message"`
+		}{
+			Message: "hi trip, 你好, 校车通",
+		}, nil)
+	})
+
 }
 
