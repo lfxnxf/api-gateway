@@ -9,9 +9,9 @@ import (
 
 	"github.com/lfxnxf/frame/BackendPlatform/golang/logging"
 	"github.com/lfxnxf/frame/logic/inits"
-	"github.com/school/api-gateway/conf"
-	"github.com/school/api-gateway/server/http"
-	"github.com/school/api-gateway/service"
+	"github.com/lfxnxf/school/api-gateway/conf"
+	"github.com/lfxnxf/school/api-gateway/server/http"
+	"github.com/lfxnxf/school/api-gateway/service"
 )
 
 func init() {

@@ -2,9 +2,9 @@ package service
 
 import (
 	"context"
-	"github.com/school/api-gateway/conf"
-	"github.com/school/api-gateway/dao"
-	"github.com/school/api-gateway/manager"
+	"github.com/lfxnxf/school/api-gateway/conf"
+	"github.com/lfxnxf/school/api-gateway/dao"
+	"github.com/lfxnxf/school/api-gateway/manager"
 )
 
 type Service struct {

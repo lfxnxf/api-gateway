@@ -3,7 +3,7 @@ package manager
 import (
 	"context"
 
-	"github.com/school/api-gateway/conf"
+	"github.com/lfxnxf/school/api-gateway/conf"
 )
 
 // Manager represents middleware component
