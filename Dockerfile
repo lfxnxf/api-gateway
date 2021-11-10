@@ -18,4 +18,5 @@ RUN go build -o api-gateway ./app/main.go
 # 移动到用于存放生成的二进制文件的 /dist 目录
 WORKDIR /dist
 RUN cp /docker/api-gateway .
-CMD ["/dist/api-gateway"]
+RUN cp /docker/app/config ./api-gateway-config
+CMD ["/dist/api-gateway -config ./api-gateway-config/test/config.toml"]
