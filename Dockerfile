@@ -8,13 +8,13 @@ ENV GO111MODULE=on \
     GOARCH=amd64 \
     GOPROXY=https://goproxy.cn,direct
 
-# 移动到工作目录：/build
+# 移动到工作目录：/docker
 WORKDIR /docker
 # 将代码复制到容器中
 COPY . .
 # 编译文件
 RUN go build -o api-gateway ./app/main.go
-# 将二进制文件从 /build 目录复制到这里
+# 将二进制文件从 /docker 目录复制到这里
 # 移动到用于存放生成的二进制文件的 /dist 目录
 WORKDIR /dist
 RUN cp /docker/api-gateway .
