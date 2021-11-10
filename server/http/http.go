@@ -7,17 +7,22 @@ import (
 	"github.com/lfxnxf/frame/logic/inits"
 	httpserver "github.com/lfxnxf/frame/logic/inits/http/server"
 	httpplugin "github.com/lfxnxf/frame/logic/inits/plugins/http"
+	"github.com/lfxnxf/school/api-gateway/ws"
 )
 
 var (
 	svc *service.Service
 
+	wsSvc *ws.Ws
+
 	httpServer httpserver.Server
 )
 
 // Init create a rpc server and run it
-func Init(s *service.Service, conf *conf.Config) {
+func Init(s *service.Service, w *ws.Ws, conf *conf.Config) {
 	svc = s
+
+	wsSvc = w
 
 	// new http server
 	httpServer = inits.HTTPServer()

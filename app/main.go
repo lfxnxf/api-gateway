@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"github.com/lfxnxf/school/api-gateway/ws"
 	"log"
 	"os"
 	"os/signal"
@@ -42,8 +43,12 @@ func main() {
 	// create a service instance
 	srv := service.New(cfg)
 
+	wsSrv := ws.New(cfg)
+
+	go ws.Manager.Start()
+
 	// init and start http server
-	http.Init(srv, cfg)
+	http.Init(srv, wsSrv, cfg)
 
 	defer http.Shutdown()
 
