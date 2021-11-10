@@ -19,4 +19,4 @@ RUN go build -o api-gateway ./app/main.go
 WORKDIR /dist
 RUN cp /docker/api-gateway .
 RUN cp -r /docker/app/config ./api-gateway-config
-CMD ["/dist/api-gateway -config ./api-gateway-config/test/config.toml"]
+CMD ["/dist/api-gateway -config /dist/api-gateway-config/test/config.toml"]
