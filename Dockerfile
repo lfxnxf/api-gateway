@@ -20,6 +20,7 @@ RUN go build -o api-gateway ./app/main.go
 ###################
 FROM scratch
 COPY ./app/config /config
+COPY ./app/logs /logs
 
 # 从builder镜像中把/dist/app 拷贝到当前目录
 COPY --from=builder /docker/api-gateway /
