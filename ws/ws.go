@@ -13,6 +13,10 @@ import (
 	"sync"
 )
 
+const (
+	allUidTopic = ""
+)
+
 type Ws struct {
 	c *conf.Config
 
@@ -87,17 +91,29 @@ func (c *ClientManager) Start() {
 		select {
 		// 注册用户，存入对应topic数组中
 		case conn := <-c.register:
+			key := topicKey(conn.Topic, conn.UID)
+			_, ok := c.ClientTopicMap.Load(key)
+			if ok {
+				c.ClientTopicMap.Delete(key)
+				for i := 0; i < len(c.Clients[conn.Topic]); i++ {
+					if c.Clients[conn.Topic][i].UID != conn.UID {
+						continue
+					}
+					c.Clients[conn.Topic] = append(c.Clients[conn.Topic][:i], c.Clients[conn.Topic][i:]...)
+				}
+			}
 			c.Clients[conn.Topic] = append(c.Clients[conn.Topic], conn)
-			c.ClientTopicMap.LoadOrStore(topicKey(conn.Topic, conn.UID), conn)
-			// todo 用户心跳
+			c.ClientTopicMap.Store(key, conn)
+
 		// 用户退出长连接
 		case conn := <-c.unregister:
 			for i := 0; i < len(c.Clients[conn.Topic]); i++ {
-				if conn == c.Clients[conn.Topic][i] {
-					c.Clients[conn.Topic] = append(c.Clients[conn.Topic][:i], c.Clients[conn.Topic][i:]...)
+				if conn != c.Clients[conn.Topic][i] {
+					continue
 				}
-				c.ClientTopicMap.Delete(topicKey(conn.Topic, conn.UID))
+				c.Clients[conn.Topic] = append(c.Clients[conn.Topic][:i], c.Clients[conn.Topic][i:]...)
 			}
+			c.ClientTopicMap.Delete(topicKey(conn.Topic, conn.UID))
 		case sendMs := <-c.broadcast:
 			var sendConnList []*Client
 			if sendMs.Recipient != 0 {
@@ -189,9 +205,17 @@ func (c *Client) Read(ctx context.Context) {
 			c.Socket.Close()
 			break
 		}
-		fmt.Println(string(message))
+		if string(message) == "ping" {
+			Manager.SendOne(DownsideMessage{
+				Sender:    0,
+				Topic:     "",
+				Recipient: c.UID,
+				Content:   "pong",
+				Event:     "",
+			})
+			continue
+		}
 		log.Infow("ws read message:", zap.String("data", fmt.Sprintf("uid:%d, data:%s", c.UID, string(message))))
-		//TODO 上行消息调用业务
 		var upsideMessage UpsideMessage
 		err = json.Unmarshal(message, &upsideMessage)
 		if err != nil {
@@ -204,6 +228,7 @@ func (c *Client) Read(ctx context.Context) {
 				ErrorCode: 499,
 				ErrorMsg:  "参数错误",
 			})
+			continue
 		}
 		//TODO 调用业务数据
 		jsonMessage := DownsideMessage{}

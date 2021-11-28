@@ -13,6 +13,7 @@ WORKDIR /docker
 # 将代码复制到容器中
 COPY . .
 # 编译文件
+RUN go mod tidy
 RUN go build -o api-gateway ./app/main.go
 
 ###################
