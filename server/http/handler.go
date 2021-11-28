@@ -2,7 +2,6 @@ package http
 
 import (
 	httpserver "github.com/lfxnxf/frame/logic/inits/http/server"
-	"github.com/lfxnxf/school/api-gateway/ws"
 )
 
 type Request struct {
@@ -27,20 +26,11 @@ func ping(c *httpserver.Context) {
 }
 
 func actionHandler(c *httpserver.Context) {
-	//action := c.Params.ByName("action")
-	ws.Manager.SendOne(ws.DownsideMessage{
-		Sender:    0,
-		Topic:     "",
-		Recipient: 1310265,
-		Content:   c.Request.URL.RawQuery,
-		Event:     "",
-		SeqId:     1,
-		ErrorCode: 0,
-		ErrorMsg:  "",
-	})
 	c.JSON(struct {
-		Message string `json:"message"`
+		Path  string `json:"path"`
+		Query string `json:"query"`
 	}{
-		Message: c.Request.URL.RawQuery,
+		Path:  c.Request.URL.Path,
+		Query: c.Request.URL.RawQuery,
 	}, nil)
 }
