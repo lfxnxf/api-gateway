@@ -9,14 +9,6 @@ import (
 	"go.uber.org/zap"
 )
 
-// @Summary 新增车辆信息
-// @Description 新增车辆信息
-// @Accept  json
-// @Produce  json
-// @Param  body body model.AddVehicleReq true "新增车辆信息参数"
-// @Success 200 {object} utils.WrapResp
-// @Failure 500 {object} utils.WrapResp
-// @Router /api/v1/vehicle/add [post]
 func addVehicle(c *httpserver.Context) {
 	log := logging.For(c.Ctx, "func", "addVehicle")
 

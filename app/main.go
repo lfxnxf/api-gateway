@@ -13,7 +13,6 @@ import (
 	"github.com/lfxnxf/school/api-gateway/conf"
 	"github.com/lfxnxf/school/api-gateway/server/http"
 	"github.com/lfxnxf/school/api-gateway/service"
-	_ "github.com/swaggo/http-swagger/example/go-chi/docs"
 )
 
 func init() {
@@ -31,16 +30,6 @@ func init() {
 
 }
 
-// @title 校车通`
-// @version 1.0`
-// @description 校车通接口文档`
-// @termsOfService [http://swagger.io/terms/](http://swagger.io/terms/)`
-// @contact.name xuefeng`
-// @contact.url [http://www.swagger.io/support](http://www.swagger.io/support)`
-// @contact.email xuefeng6329@126.com`
-// @license.url [http://www.apache.org/licenses/LICENSE-2.0.html](http://www.apache.org/licenses/LICENSE-2.0.html)`
-// @host 47.241.77.253:10000`
-// @BasePath /api/v1/`
 func main() {
 
 	defer inits.Shutdown()

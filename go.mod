@@ -88,10 +88,6 @@ require (
 	github.com/stretchr/objx v0.1.0 // indirect
 	github.com/stretchr/testify v1.7.0 // indirect
 	github.com/swaggo/files v0.0.0-20210815190702-a29dd2bc99b2 // indirect
-	github.com/swaggo/gin-swagger v1.3.3 // indirect
-	github.com/swaggo/http-swagger v1.1.2 // indirect
-	github.com/swaggo/http-swagger/example/go-chi v0.0.0-20211012192856-5c56dbb3af38
-	github.com/swaggo/swag v1.7.6 // indirect
 	github.com/uber-go/atomic v0.0.0-00010101000000-000000000000 // indirect
 	github.com/uber/jaeger-lib v1.4.1-0.20180322162250-c5ea3abcac55 // indirect
 	github.com/wvanbergen/kazoo-go v0.0.0-20180202103751-f72d8611297a // indirect
