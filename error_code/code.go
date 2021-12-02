@@ -6,7 +6,8 @@ import (
 
 //common 错误码 全局100开头
 var (
-	UnIdentify = school_errors.AddError(100000001, "没有实名认证")
+	UnLogin               = school_errors.AddError(100000001, "请登录！")
+	VerificationCodeWrong = school_errors.AddError(100000002, "请输入正确的验证码！")
 )
 
 func Import() {

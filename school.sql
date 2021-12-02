@@ -90,3 +90,7 @@ CREATE TABLE `shifts_sites` (
     KEY `idx_shift_id_site_id` (`shift_id`, `site_id`),
     KEY `idx_shift_id_sort` (`shift_id`, `sort`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='班次站点';
+
+INSERT INTO `school`.`vehicle_info`(`id`, `name`, `load_num`, `create_time`, `update_time`) VALUES (1, '小型车辆', 9, '2021-12-01 08:20:59', '2021-12-01 08:21:17');
+INSERT INTO `school`.`vehicle_info`(`id`, `name`, `load_num`, `create_time`, `update_time`) VALUES (2, '中型车辆', 20, '2021-12-01 08:21:15', '2021-12-01 08:21:45');
+INSERT INTO `school`.`vehicle_info`(`id`, `name`, `load_num`, `create_time`, `update_time`) VALUES (3, '大型车辆', 36, '2021-12-01 08:21:40', '2021-12-01 08:21:47');

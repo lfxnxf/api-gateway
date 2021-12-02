@@ -86,7 +86,7 @@ func (s *Service) AddDiver(ctx context.Context, atom *school_http.Atom, req mode
 		return nil, error_code.HasEqPhone
 	}
 
-	err = s.dao.InsertUsers(ctx, model.UsersModel{
+	_, err = s.dao.InsertUsers(ctx, model.UsersModel{
 		Name:     req.Name,
 		BossId:   atom.Uid,
 		Identity: req.Identity,

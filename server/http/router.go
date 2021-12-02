@@ -8,6 +8,11 @@ import (
 func initRoute(s httpserver.Server) {
 	s.ANY("/ping", ping)
 
+	s.POST("/api/login", login)                                       // 登录
+	s.POST("/api/login/send_verification_code", sendVerificationCode) // 发送验证码
+
+	s.GET("/api/user/get", getUserInfo) // 获取用户资料
+
 	s.POST("/api/v1/vehicle/add", addVehicle)            // 新增车辆
 	s.GET("/api/v1/vehicle_info/get", getAllVehicleInfo) // 获取车辆分类
 	s.POST("/api/v1/driver/add", addDriver)              // 新增司机

@@ -1,5 +1,19 @@
 package model
 
+type LoginReq struct {
+	Phone            int64  `json:"phone"`
+	VerificationCode string `json:"verification_code"`
+}
+
+type LoginResp struct {
+	Token string `json:"token"`
+	Uid   int64  `json:"uid"`
+}
+
+type SendVerificationCodeReq struct {
+	Phone int64 `json:"phone"`
+}
+
 type AddDriverReq struct {
 	Name     string `json:"name"`
 	Phone    int64  `json:"phone"`
@@ -31,4 +45,12 @@ type DriverInfo struct {
 
 type GetDriversResp struct {
 	List []DriverInfo `json:"list"`
+}
+
+type GetUserInfoResp struct {
+	Uid      int64  `json:"uid"`
+	Name     string `json:"name"`
+	Address  string `json:"address"`
+	Phone    int64  `json:"phone"`
+	Identity int64  `json:"identity"`
 }

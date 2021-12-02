@@ -3,19 +3,20 @@ package utils
 import (
 	"crypto/md5"
 	"crypto/sha1"
+	"encoding/json"
+	"errors"
 	"fmt"
+	"github.com/lfxnxf/frame/BackendPlatform/golang/ecode"
+	"github.com/lfxnxf/frame/BackendPlatform/golang/logging"
+	"github.com/lfxnxf/frame/school_http/server/commlib/school_errors"
+	"go.uber.org/zap"
+	"golang.org/x/net/context"
 	"math/rand"
 	"runtime"
 	"strconv"
 	"strings"
 	"time"
 )
-
-type WrapResp struct {
-	Code int         `json:"dm_error"`
-	Msg  string      `json:"error_msg"`
-	Data interface{} `json:"data"`
-}
 
 func InStringArray(item string, items []string) bool {
 	for _, eachItem := range items {
@@ -40,6 +41,17 @@ func Random(min, max int64) int64 {
 	return rand.Int63n(max-min+1) + min
 }
 
+func UnwrapHttpTempError(err error) error {
+	targetErr := school_errors.DMError(err)
+	switch targetErr.(type) {
+	case school_errors.Code:
+		ecode.Register(map[int]string{
+			targetErr.Code(): targetErr.Message(),
+		})
+		return ecode.New(targetErr.Code())
+	}
+	return err
+}
 
 func String2Unix(stringTime string) int64 {
 	loc, _ := time.LoadLocation("Local")
@@ -51,6 +63,21 @@ func String2Unix(stringTime string) int64 {
 
 func NowTimeString() string {
 	return time.Now().Format("2006-01-02 15:04:05")
+}
+
+func GetPoorDayTime(day int) (int64, string) {
+	// 时区
+	timeZone := time.FixedZone("CST", 8*3600) // 东八区
+
+	// n天
+	nowTime := time.Now().In(timeZone)
+	poorTime := nowTime.AddDate(0, 0, day)
+
+	// 时间转换格式
+	poorTimeS := poorTime.Unix()                                      // 秒时间戳
+	poorDate := time.Unix(poorTimeS, 0).Format("2006-01-02 15:04:05") // 固定格式的日期时间戳
+
+	return poorTimeS, poorDate
 }
 
 // 分组
@@ -77,7 +104,6 @@ func SplitArray(arr []string, num int64) (splits [][]string) {
 		}
 		start = i * quantity
 	}
-
 	return ltSlices
 }
 
@@ -258,6 +284,11 @@ func Md5(s string) string {
 	return fmt.Sprintf("%x", md5.Sum(data))
 }
 
+func Data2Md5(data interface{}) string {
+	bytesVal, _ := json.Marshal(data)
+	return fmt.Sprintf("%x", md5.Sum(bytesVal))
+}
+
 // 生成指定长度随机字符串
 // 0 - 数字
 // 1 - 小写字母
@@ -300,4 +331,73 @@ func StringToInt64Slice(src string) []int64 {
 		result = append(result, vInt)
 	}
 	return result
+}
+
+func StringSlice2InterfaceSlice(src []string) []interface{} {
+	result := make([]interface{}, 0)
+	for _, v := range src {
+		result = append(result, v)
+	}
+	return result
+}
+
+func ErrorLog(ctx context.Context, log *logging.Logger, message string, err error) {
+	errRes := school_errors.DMError(err)
+	if errRes == school_errors.Codes.ServerError {
+		if log == nil {
+			log = logging.For(ctx, message)
+		}
+		log.Errorw(message, zap.String("error", err.Error()))
+	}
+}
+
+func RemoveDuplicateElementString(array []string) []string {
+	result := make([]string, 0, len(array))
+	temp := map[string]struct{}{}
+	for _, item := range array {
+		if _, ok := temp[item]; !ok {
+			temp[item] = struct{}{}
+			result = append(result, item)
+		}
+	}
+	return result
+}
+
+// []int64 to []string
+func Int64Slice2String(src []int64) string {
+	var res []string
+	for _, v := range src {
+		res = append(res, fmt.Sprintf("%d", v))
+	}
+	return strings.Join(res, ",")
+}
+
+func StringSlice2Int64Slice(src []string) []int64 {
+	var res []int64
+	for _, v := range src {
+		num, _ := strconv.ParseInt(v, 10, 64)
+		res = append(res, num)
+	}
+	return res
+}
+
+// 从src中去除except
+func ExceptArrayByInt64(src []int64, except int64) []int64 {
+	newArray := make([]int64, 0)
+	for _, value := range src {
+		if except == value {
+			continue
+		}
+		newArray = append(newArray, value)
+	}
+	return newArray
+}
+
+func RandomInt64Slice(src []int64) (int64, error) {
+	if len(src) <= 0 {
+		return 0, errors.New("slice is empty")
+	}
+	rand.Seed(time.Now().UnixNano())
+	index := rand.Int63n((int64(len(src))-1)+1)
+	return src[index], nil
 }

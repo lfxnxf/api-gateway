@@ -69,13 +69,29 @@ func (d *Dao) GetDrivers(ctx context.Context, uid int64) ([]model.UsersModel, er
 }
 
 // 新增用户
-func (d *Dao) InsertUsers(ctx context.Context, m model.UsersModel) error {
+func (d *Dao) InsertUsers(ctx context.Context, m model.UsersModel) (model.UsersModel, error) {
 	log := logging.For(ctx, "func", "InsertUsers",
 		zap.Any("model", m),
 	)
 	err := d.db.Master(ctx).Create(&m).Error
 	if err != nil {
 		log.Errorw("Create",
+			zap.String("err", err.Error()),
+		)
+		return m, err
+	}
+	log.Infow("success")
+	return m, nil
+}
+
+func (d *Dao) UpdateUsersByMap(ctx context.Context, id int64, data map[string]interface{}) error {
+	log := logging.For(ctx, "func", "InsertUsers",
+		zap.Int64("uid", id),
+		zap.Any("data", data),
+	)
+	err := d.db.Master(ctx).Table(model.UsersTableName).Where("id = ?", id).Update(data).Error
+	if err != nil {
+		log.Errorw("Update",
 			zap.String("err", err.Error()),
 		)
 		return err
