@@ -26,4 +26,4 @@ COPY ./app/logs /logs
 # 从builder镜像中把/dist/app 拷贝到当前目录
 COPY --from=builder /docker/api-gateway /
 
-ENTRYPOINT ["/api-gateway", "-config", "config/producer/config.toml"]
+ENTRYPOINT ["/api-gateway", "-config", "config/test/config.toml"]

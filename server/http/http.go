@@ -1,12 +1,12 @@
 package http
 
 import (
-	"github.com/lfxnxf/school/api-gateway/conf"
-	"github.com/lfxnxf/school/api-gateway/service"
 	"github.com/lfxnxf/frame/BackendPlatform/golang/logging"
 	"github.com/lfxnxf/frame/logic/inits"
 	httpserver "github.com/lfxnxf/frame/logic/inits/http/server"
 	httpplugin "github.com/lfxnxf/frame/logic/inits/plugins/http"
+	"github.com/lfxnxf/school/api-gateway/conf"
+	"github.com/lfxnxf/school/api-gateway/service"
 	"github.com/lfxnxf/school/api-gateway/ws"
 )
 

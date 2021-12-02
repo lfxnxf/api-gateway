@@ -5,11 +5,13 @@ import (
 	httpserver "github.com/lfxnxf/frame/logic/inits/http/server"
 )
 
-
 func initRoute(s httpserver.Server) {
 	s.ANY("/ping", ping)
 
-	s.GET("/api/*action", actionHandler)
+	s.POST("/api/v1/vehicle/add", addVehicle)            // 新增车辆
+	s.GET("/api/v1/vehicle_info/get", getAllVehicleInfo) // 获取车辆分类
+	s.POST("/api/v1/driver/add", addDriver)              // 新增司机
+	s.GET("/api/v1/driver/get", getDrivers)              // 获取全部司机
 
 	s.GET("/ws", wsHandler) // 长连接服务
 }

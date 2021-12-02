@@ -11,7 +11,7 @@
 [[redis]]
 	server_name="school.api.redis"
 	addr="127.0.0.1:6379"
-	password="fsgit_2020"
+#	password="fsgit_2020"
 	max_idle=1000
 	max_active=1000
 	idle_timeout=1000
@@ -21,8 +21,9 @@
 	database=0
 	slow_time = 200
 
+
 [[database]]
 	name="school.api.db"
-	master = "school:4rTRZcTGtJim2Bzr@tcp(47.241.77.253:3306)/school?charset=utf8&parseTime=true&loc=Local&charset=utf8mb4&collation=utf8mb4_unicode_ci"
-	slaves = ["school:4rTRZcTGtJim2Bzr@tcp(47.241.77.253:3306)/school?charset=utf8&parseTime=true&loc=Local&charset=utf8mb4&collation=utf8mb4_unicode_ci"]
+	master = "root:root@tcp(127.0.0.1:3306)/school?charset=utf8&parseTime=true&loc=Local&charset=utf8mb4&collation=utf8mb4_unicode_ci"
+	slaves = ["root:root@tcp(127.0.0.1:3306)/school?charset=utf8&parseTime=true&loc=Local&charset=utf8mb4&collation=utf8mb4_unicode_ci"]
 
