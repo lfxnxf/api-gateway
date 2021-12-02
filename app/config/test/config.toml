@@ -10,8 +10,8 @@
 
 [[redis]]
 	server_name="school.api.redis"
-	addr="127.0.0.1:6379"
-	password="fsgit_2020"
+	addr="47.241.77.253:6380"
+	password="xiaochetong"
 	max_idle=1000
 	max_active=1000
 	idle_timeout=1000
