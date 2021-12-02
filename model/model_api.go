@@ -6,8 +6,8 @@ type LoginReq struct {
 }
 
 type LoginResp struct {
-	Token string `json:"token"`
-	Uid   int64  `json:"uid"`
+	Token string          `json:"token"`
+	User  GetUserInfoResp `json:"user"`
 }
 
 type SendVerificationCodeReq struct {

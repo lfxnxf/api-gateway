@@ -81,7 +81,13 @@ func (s *Service) Login(ctx context.Context, req model.LoginReq) (interface{}, e
 
 	resp := model.LoginResp{
 		Token: token,
-		Uid:   user.Id,
+		User: model.GetUserInfoResp{
+			Uid:      user.Id,
+			Name:     user.Name,
+			Address:  user.Address,
+			Phone:    user.Phone,
+			Identity: user.Identity,
+		},
 	}
 
 	log.Infow("success!")
