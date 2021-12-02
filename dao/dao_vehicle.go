@@ -82,7 +82,7 @@ func (d *Dao) GetAllVehicleByBoss(ctx context.Context, bossUid int64) ([]model.V
 func (d *Dao) GetAllVehicleInfo(ctx context.Context) ([]model.VehicleInfoModel, error) {
 	log := logging.For(ctx, "func", "GetAllVehicleInfo")
 	var resp []model.VehicleInfoModel
-	err := d.db.Slave(ctx).Table(model.VehicleInfoTableName).Table(model.VehicleInfoTableName).
+	err := d.db.Slave(ctx).Table(model.VehicleInfoTableName).
 		Scan(&resp).Error
 	if err != nil {
 		log.Errorw("Get",

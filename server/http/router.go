@@ -8,6 +8,8 @@ import (
 func initRoute(s httpserver.Server) {
 	s.ANY("/ping", ping)
 
+	s.GET("/ws", wsHandler) // 长连接服务
+
 	s.POST("/api/login", login)                                       // 登录
 	s.POST("/api/login/send_verification_code", sendVerificationCode) // 发送验证码
 
@@ -18,5 +20,6 @@ func initRoute(s httpserver.Server) {
 	s.POST("/api/v1/driver/add", addDriver)              // 新增司机
 	s.GET("/api/v1/driver/get", getDrivers)              // 获取全部司机
 
-	s.GET("/ws", wsHandler) // 长连接服务
+	s.GET("/api/v1/sites/get_list", getSitesList) // 获取站点
+
 }

@@ -8,7 +8,7 @@ import (
 	"go.uber.org/zap"
 )
 
-// 获取全部司机信息
+// 获取用户信息
 func (s *Service) GetUserInfo(ctx context.Context, atom *school_http.Atom) (interface{}, error) {
 	log := logging.For(ctx, "func", "GetDivers",
 		zap.Int64("uid", atom.Uid),

@@ -54,3 +54,18 @@ type GetUserInfoResp struct {
 	Phone    int64  `json:"phone"`
 	Identity int64  `json:"identity"`
 }
+
+type GetSitesListReq struct {
+	Name string `json:"name"`
+}
+
+type SiteInfo struct {
+	Id        int64  `json:"id"`
+	Name      string `json:"name"`
+	Longitude string `json:"longitude"`
+	Latitude  string `json:"latitude"`
+}
+
+type GetSitesListResp struct {
+	List []SiteInfo `json:"list"`
+}

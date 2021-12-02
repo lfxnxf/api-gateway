@@ -26,7 +26,6 @@ func wsHandler(c *httpserver.Context) {
 	// websocket connect
 	client := &ws.Client{UID: atom.Uid, Socket: conn, Send: make(chan []byte)}
 
-	go ws.Manager.Register(client)
 	go client.Read(c.Ctx)
 	go client.Write(c.Ctx)
 }

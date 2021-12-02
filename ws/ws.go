@@ -9,12 +9,15 @@ import (
 	"github.com/lfxnxf/school/api-gateway/conf"
 	"github.com/lfxnxf/school/api-gateway/dao"
 	"github.com/lfxnxf/school/api-gateway/manager"
+	"github.com/lfxnxf/school/api-gateway/utils"
 	"go.uber.org/zap"
 	"sync"
 )
 
 const (
-	allUidTopic = ""
+	allUidTopic    = ""
+	eventSubscribe = "subscribe" // 订阅类型
+	eventMessage   = "message"
 )
 
 type Ws struct {
@@ -62,14 +65,15 @@ type UpsideMessage struct {
 	Event     string `json:"event"`
 	SeqId     int64  `json:"seq_id"`
 	Namespace string `json:"namespace"`
+	Topic     string `json:"topic"`
 }
 
 // Client is a websocket client
 type Client struct {
-	UID    int64
-	Socket *websocket.Conn
-	Send   chan []byte
-	Topic  string `json:"topic"`
+	UID       int64
+	Socket    *websocket.Conn
+	Send      chan []byte
+	TopicList []string
 }
 
 // Manager define a ws server manager
@@ -81,50 +85,44 @@ var Manager = ClientManager{
 	ClientTopicMap: new(sync.Map),
 }
 
-func (c *ClientManager) Register(client *Client) {
-	c.register <- client
+func (m *ClientManager) Register(client *Client) {
+	m.register <- client
 }
 
 // Start is to start a ws server
-func (c *ClientManager) Start() {
+func (m *ClientManager) Start() {
 	for {
 		select {
-		// 注册用户，存入对应topic数组中
-		case conn := <-c.register:
-			key := topicKey(conn.Topic, conn.UID)
-			_, ok := c.ClientTopicMap.Load(key)
-			if ok {
-				c.ClientTopicMap.Delete(key)
-				for i := 0; i < len(c.Clients[conn.Topic]); i++ {
-					if c.Clients[conn.Topic][i].UID != conn.UID {
-						continue
-					}
-					c.Clients[conn.Topic] = append(c.Clients[conn.Topic][:i], c.Clients[conn.Topic][i:]...)
-				}
-			}
-			c.Clients[conn.Topic] = append(c.Clients[conn.Topic], conn)
-			c.ClientTopicMap.Store(key, conn)
+		// 注册用户
+		case conn := <-m.register:
+			// 默认订阅单个频道
+			topic := topicKey("uid:", conn.UID)
+			m.Clients[topic][0] = conn
+			m.ClientTopicMap.Store(topic, conn)
+			conn.TopicList = append(conn.TopicList, topic)
 
 		// 用户退出长连接
-		case conn := <-c.unregister:
-			for i := 0; i < len(c.Clients[conn.Topic]); i++ {
-				if conn != c.Clients[conn.Topic][i] {
-					continue
+		case conn := <-m.unregister:
+			for _, topic := range conn.TopicList {
+				for i := 0; i < len(m.Clients[topic]); i++ {
+					if conn != m.Clients[topic][i] {
+						continue
+					}
+					m.Clients[topic] = append(m.Clients[topic][:i], m.Clients[topic][i:]...)
 				}
-				c.Clients[conn.Topic] = append(c.Clients[conn.Topic][:i], c.Clients[conn.Topic][i:]...)
+				m.ClientTopicMap.Delete(topic)
 			}
-			c.ClientTopicMap.Delete(topicKey(conn.Topic, conn.UID))
-		case sendMs := <-c.broadcast:
+		case sendMs := <-m.broadcast:
 			var sendConnList []*Client
 			if sendMs.Recipient != 0 {
-				sendConnLoad, _ := c.ClientTopicMap.Load(topicKey(sendMs.Topic, sendMs.Recipient))
+				sendConnLoad, _ := m.ClientTopicMap.Load(topicKey(sendMs.Topic, sendMs.Recipient))
 				sendConn, ok := sendConnLoad.(*Client)
 				if !ok {
 					break
 				}
 				sendConnList = append(sendConnList, sendConn)
 			} else {
-				for _, v := range c.Clients[sendMs.Topic] {
+				for _, v := range m.Clients[sendMs.Topic] {
 					sendConnList = append(sendConnList, v)
 				}
 			}
@@ -138,7 +136,7 @@ func (c *ClientManager) Start() {
 				case conn.Send <- bytes:
 				default:
 					close(conn.Send)
-					c.unregister <- conn
+					m.unregister <- conn
 				}
 			}
 		}
@@ -149,19 +147,19 @@ func topicKey(topic string, uid int64) string {
 	return fmt.Sprintf("%s_%d", topic, uid)
 }
 
-func (c *ClientManager) SendOne(data DownsideMessage) {
+func (m *ClientManager) SendOne(data DownsideMessage) {
 	select {
-	case c.broadcast <- data:
+	case m.broadcast <- data:
 		break
 	default:
 	}
 }
 
-func (c *ClientManager) MultiSend(recipientList []int64, msg interface{}, ev, topic string) {
+func (m *ClientManager) MultiSend(recipientList []int64, msg interface{}, ev, topic string) {
 	ms, _ := json.Marshal(msg)
 	for _, v := range recipientList {
 		select {
-		case c.broadcast <- DownsideMessage{
+		case m.broadcast <- DownsideMessage{
 			Sender:    0,
 			Topic:     topic,
 			Recipient: v,
@@ -176,10 +174,10 @@ func (c *ClientManager) MultiSend(recipientList []int64, msg interface{}, ev, to
 	}
 }
 
-func (c *ClientManager) Broadcast(topic, ev string, msg interface{}) {
+func (m *ClientManager) Broadcast(topic, ev string, msg interface{}) {
 	ms, _ := json.Marshal(msg)
 	select {
-	case c.broadcast <- DownsideMessage{
+	case m.broadcast <- DownsideMessage{
 		Sender:    0,
 		Topic:     topic,
 		Recipient: 0,
@@ -195,14 +193,14 @@ func (c *Client) Read(ctx context.Context) {
 	log := logging.For(ctx, "func", "ws.Read")
 	defer func() {
 		Manager.unregister <- c
-		c.Socket.Close()
+		_ = c.Socket.Close()
 	}()
 
 	for {
 		_, message, err := c.Socket.ReadMessage()
 		if err != nil {
 			Manager.unregister <- c
-			c.Socket.Close()
+			_ = c.Socket.Close()
 			break
 		}
 		if string(message) == "ping" {
@@ -228,6 +226,21 @@ func (c *Client) Read(ctx context.Context) {
 				ErrorCode: 499,
 				ErrorMsg:  "参数错误",
 			})
+			continue
+		}
+		// 订阅
+		if upsideMessage.Event == eventSubscribe {
+			topic := upsideMessage.Topic
+			for i := 0; i < len(Manager.Clients[topic]); i++ {
+				if Manager.Clients[topic][i].UID != c.UID {
+					continue
+				}
+				Manager.Clients[topic] = append(Manager.Clients[topic][:i], Manager.Clients[topic][i:]...)
+			}
+			Manager.Clients[topic] = append(Manager.Clients[topic], c)
+			if !utils.InStringArray(topic, c.TopicList) {
+				c.TopicList = append(c.TopicList, topic)
+			}
 			continue
 		}
 		//TODO 调用业务数据

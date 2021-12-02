@@ -6,7 +6,7 @@ replace github.com/codahale/hdrhistogram => github.com/HdrHistogram/hdrhistogram
 
 go 1.17
 
-require github.com/lfxnxf/frame v1.0.1-0.20211109033327-7b8826187d51
+require github.com/lfxnxf/frame v1.0.1-0.20211202110506-c4e0442040a0
 
 require (
 	github.com/BurntSushi/toml v0.4.1 // indirect
