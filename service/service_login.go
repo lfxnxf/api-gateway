@@ -95,7 +95,7 @@ func (s *Service) SendVerificationCode(ctx context.Context, req model.SendVerifi
 	)
 
 	//todo 生成验证码用随机数,调用真实接口发送短信验证码
-	code := "123456"
+	code := "1234"
 	err := s.dao.SetVerificationCode(ctx, req.Phone, code)
 	if err != nil {
 		log.Errorw("s.dao.SetVerificationCode err", zap.Error(err))
