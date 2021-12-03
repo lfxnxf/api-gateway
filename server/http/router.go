@@ -20,6 +20,8 @@ func initRoute(s httpserver.Server) {
 	s.POST("/api/v1/driver/add", addDriver)              // 新增司机
 	s.GET("/api/v1/driver/get", getDrivers)              // 获取全部司机
 
+	s.POST("/api/v1/vehicle/sites/add", saveVehicleSites) // 车辆新增站点
+
 	s.GET("/api/v1/sites/get_list", getSitesList) // 获取站点
 
 }

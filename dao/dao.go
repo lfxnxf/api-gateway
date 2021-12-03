@@ -2,6 +2,7 @@ package dao
 
 import (
 	"context"
+	"github.com/jinzhu/gorm"
 	"github.com/lfxnxf/frame/logic/inits/proxy"
 
 	"github.com/lfxnxf/school/api-gateway/conf"
@@ -35,4 +36,9 @@ func (d *Dao) Ping(ctx context.Context) error {
 // Close release resource
 func (d *Dao) Close() error {
 	return nil
+}
+
+// 开启事务
+func (d *Dao) StartTransaction(ctx context.Context) *gorm.DB {
+	return d.db.Master(ctx).Begin()
 }

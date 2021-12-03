@@ -69,3 +69,14 @@ type SiteInfo struct {
 type GetSitesListResp struct {
 	List []SiteInfo `json:"list"`
 }
+
+type SaveVehicleSitesReq struct {
+	VehicleId int64             `json:"vehicle_id"`
+	List      []VehicleSiteInfo `json:"list"`
+}
+
+type VehicleSiteInfo struct {
+	VehicleId int64 `json:"vehicle_id"`
+	SiteId    int64 `json:"site_id"`
+	Sort      int64 `json:"sort"`
+}

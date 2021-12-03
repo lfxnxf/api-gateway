@@ -8,11 +8,32 @@ import (
 )
 
 func (d *Dao) GetVehicleInfoByLicensePlate(ctx context.Context, licensePlate string) (model.VehicleModel, error) {
-	log := logging.For(ctx, "func", "GetUserInfo",
+	log := logging.For(ctx, "func", "GetVehicleInfoByLicensePlate",
 		zap.String("license_plate", licensePlate),
 	)
 	var vehicles []model.VehicleModel
 	err := d.db.Slave(ctx).Table(model.VehicleTableName).Where("license_plate = ? and status = ? ", licensePlate, model.VehicleNormal).Scan(&vehicles).Error
+	if err != nil {
+		log.Errorw("Get",
+			zap.String("err", err.Error()),
+		)
+		return model.VehicleModel{}, err
+	}
+
+	if len(vehicles) <= 0 {
+		return model.VehicleModel{}, nil
+	}
+
+	log.Infow("success", zap.Any("users", vehicles))
+	return vehicles[0], nil
+}
+
+func (d *Dao) GetVehicleInfoById(ctx context.Context, id int64) (model.VehicleModel, error) {
+	log := logging.For(ctx, "func", "GetUserInfo",
+		zap.Int64("id", id),
+	)
+	var vehicles []model.VehicleModel
+	err := d.db.Slave(ctx).Table(model.VehicleTableName).Where("id = ? and status = ? ", id, model.VehicleNormal).Scan(&vehicles).Error
 	if err != nil {
 		log.Errorw("Get",
 			zap.String("err", err.Error()),

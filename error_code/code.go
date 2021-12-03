@@ -8,6 +8,7 @@ import (
 var (
 	UnLogin               = school_errors.AddError(100000001, "请登录！")
 	VerificationCodeWrong = school_errors.AddError(100000002, "请输入正确的验证码！")
+	NotHasAuth            = school_errors.AddError(100000003, "没有操作权限！")
 )
 
 func Import() {
