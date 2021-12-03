@@ -31,6 +31,16 @@ func saveVehicleSites(c *httpserver.Context) {
 		return
 	}
 
+	if req.VehicleId <= 0 {
+		c.JSONAbort(nil, school_errors.Codes.ClientError)
+		return
+	}
+
+	if len(req.List) <= 0 {
+		c.JSONAbort(nil, school_errors.Codes.ClientError)
+		return
+	}
+
 	resp, err := svc.SaveVehicleSites(c.Ctx, atom, req)
 	if err != nil {
 		log.Errorw("AddVehicle",
