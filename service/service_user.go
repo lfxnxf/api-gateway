@@ -47,10 +47,6 @@ func (s *Service) EditUserInfo(ctx context.Context, atom *school_http.Atom, req 
 		updateMap["name"] = req.Name
 	}
 
-	if req.Phone != 0 {
-		updateMap["phone"] = req.Phone
-	}
-
 	err := s.dao.UpdateUsersByMap(ctx, atom.Uid, updateMap)
 	if err != nil {
 		log.Errorw("s.dao.UpdateUsersByMap error", zap.Error(err))

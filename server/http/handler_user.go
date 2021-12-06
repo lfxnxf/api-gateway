@@ -55,6 +55,13 @@ func editUserInfo(c *httpserver.Context) {
 		c.JSONAbort(nil, school_errors.Codes.ClientError)
 		return
 	}
+
+	if req.Name == "" {
+		log.Errorw("name is empty error", zap.String("err", err.Error()))
+		c.JSONAbort(nil, school_errors.Codes.ClientError)
+		return
+	}
+
 	resp, err := svc.EditUserInfo(c.Ctx, atom, req)
 	if err != nil {
 		log.Errorw("EditUserInfo",
