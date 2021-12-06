@@ -13,7 +13,8 @@ func initRoute(s httpserver.Server) {
 	s.POST("/api/login", login)                                       // 登录
 	s.POST("/api/login/send_verification_code", sendVerificationCode) // 发送验证码
 
-	s.GET("/api/user/get", getUserInfo) // 获取用户资料
+	s.GET("/api/user/get", getUserInfo)    // 获取用户资料
+	s.POST("/api/user/edit", editUserInfo) // 修改用户资料
 
 	s.POST("/api/v1/vehicle/add", addVehicle)            // 新增车辆
 	s.GET("/api/v1/vehicle_info/get", getAllVehicleInfo) // 获取车辆分类

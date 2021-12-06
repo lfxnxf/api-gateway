@@ -80,3 +80,9 @@ type VehicleSiteInfo struct {
 	SiteId    int64 `json:"site_id"`
 	Sort      int64 `json:"sort"`
 }
+
+type EditUserInfoReq struct {
+	Name string `json:"name"`
+	Phone int64 `json:"phone"`
+	Address string `json:"address"`
+}

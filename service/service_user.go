@@ -31,3 +31,32 @@ func (s *Service) GetUserInfo(ctx context.Context, atom *school_http.Atom) (inte
 	return resp, nil
 }
 
+// 修改用户信息
+func (s *Service) EditUserInfo(ctx context.Context, atom *school_http.Atom, req model.EditUserInfoReq) (interface{}, error) {
+	log := logging.For(ctx, "func", "GetDivers",
+		zap.Int64("uid", atom.Uid),
+		zap.Any("req", req),
+	)
+
+	updateMap := make(map[string]interface{})
+	if req.Address != "" {
+		updateMap["address"] = req.Address
+	}
+
+	if req.Name != "" {
+		updateMap["name"] = req.Name
+	}
+
+	if req.Phone != 0 {
+		updateMap["phone"] = req.Phone
+	}
+
+	err := s.dao.UpdateUsersByMap(ctx, atom.Uid, updateMap)
+	if err != nil {
+		log.Errorw("s.dao.UpdateUsersByMap error", zap.Error(err))
+		return nil, err
+	}
+
+	log.Infow("success!")
+	return nil, nil
+}
