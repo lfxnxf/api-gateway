@@ -6,7 +6,9 @@ import (
 	"github.com/lfxnxf/frame/school_http/server/commlib/school_errors"
 	"github.com/lfxnxf/frame/school_http/server/commlib/school_http"
 	"github.com/lfxnxf/school/api-gateway/model"
+	"github.com/lfxnxf/school/api-gateway/utils"
 	"go.uber.org/zap"
+	"unicode/utf8"
 )
 
 func getUserInfo(c *httpserver.Context) {
@@ -58,6 +60,12 @@ func editUserInfo(c *httpserver.Context) {
 
 	if req.Name == "" {
 		log.Errorw("name is empty error", zap.String("err", err.Error()))
+		c.JSONAbort(nil, school_errors.Codes.ClientError)
+		return
+	}
+
+	if utf8.RuneCountInString(req.Name) > 10 || !utils.IsAllChinese(req.Name) {
+		log.Errorw("name length > 10 or name is not chinese", zap.String("err", err.Error()))
 		c.JSONAbort(nil, school_errors.Codes.ClientError)
 		return
 	}

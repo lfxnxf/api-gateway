@@ -16,6 +16,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"unicode"
+	"unicode/utf8"
 )
 
 func InStringArray(item string, items []string) bool {
@@ -400,4 +402,28 @@ func RandomInt64Slice(src []int64) (int64, error) {
 	rand.Seed(time.Now().UnixNano())
 	index := rand.Int63n((int64(len(src))-1)+1)
 	return src[index], nil
+}
+
+// 是否包含中文
+func IsIncludeChinese(str string) bool {
+	var count int
+	for _, v := range str {
+		if unicode.Is(unicode.Han, v) {
+			count++
+			break
+		}
+	}
+	return count > 0
+}
+
+// 是否全是中文
+func IsAllChinese(str string) bool {
+	var count int
+	for _, v := range str {
+		if unicode.Is(unicode.Han, v) {
+			count++
+			break
+		}
+	}
+	return count == utf8.RuneCountInString(str)
 }
