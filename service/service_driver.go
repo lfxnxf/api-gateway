@@ -24,13 +24,13 @@ func (s *Service) GetDivers(ctx context.Context, atom *school_http.Atom) (interf
 		zap.Int64("uid", atom.Uid),
 	)
 
+	resp := model.GetDriversResp{
+		List: make([]model.DriverInfo, 0),
+	}
 	drivers, err := s.dao.GetDrivers(ctx, atom.Uid)
 	if err != nil {
 		log.Errorw("s.dao.GetAllVehicleByBoss error", zap.Error(err))
-		return nil, err
-	}
-	resp := model.GetDriversResp{
-		List: make([]model.DriverInfo, 0),
+		return resp, err
 	}
 	for _, v := range drivers {
 		info := model.DriverInfo{

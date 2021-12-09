@@ -15,6 +15,10 @@ func (s *Service) GetSitesList(ctx context.Context, atom *school_http.Atom, req 
 		zap.Any("req", req),
 	)
 
+	resp := model.GetSitesListResp{
+		List: make([]model.SiteInfo, 0),
+	}
+
 	where := make(map[string]interface{}, 0)
 	if req.Name != "" {
 		where["name"] = req.Name
@@ -23,11 +27,7 @@ func (s *Service) GetSitesList(ctx context.Context, atom *school_http.Atom, req 
 	sitesModelList, err := s.dao.GetAllSites(ctx, where)
 	if err != nil {
 		log.Errorw("s.dao.GetAllSites error", zap.Error(err))
-		return nil, err
-	}
-
-	resp := model.GetSitesListResp{
-		List: make([]model.SiteInfo, 0),
+		return resp, err
 	}
 
 	//组装数据
