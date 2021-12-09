@@ -3,7 +3,7 @@ package model
 const (
 	UsersTableName = "users"
 
-	IdentityBoss    = 1 // 老板
+	IdentityBoss    = 1 // 主管理员
 	IdentityAdmin   = 2 // 管理员
 	IdentityDriver  = 3 // 司机
 	IdentityParents = 4 // 家长
@@ -11,6 +11,17 @@ const (
 	UserStatusNormal  = 1 // 正常
 	UserStatusDeleted = 2 // 删除
 )
+
+var identityTextMap = map[int64]string{
+	IdentityBoss:    "主管理员",
+	IdentityAdmin:   "管理员",
+	IdentityDriver:  "乘务员",
+	IdentityParents: "家长",
+}
+
+func GetIdentityText(identity int64) string {
+	return identityTextMap[identity]
+}
 
 type UsersModel struct {
 	Id       int64  `json:"id" gorm:"column:id"`

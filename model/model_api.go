@@ -45,10 +45,11 @@ type GetVehicleInfoResp struct {
 }
 
 type DriverInfo struct {
-	Id       int64  `json:"id"`
-	Name     string `json:"name"`
-	Phone    int64  `json:"phone"`
-	Identity int64  `json:"identity"`
+	Id            int64  `json:"id"`
+	Name          string `json:"name"`
+	Phone         int64  `json:"phone"`
+	Identity      int64  `json:"identity"`
+	IdentityTitle string `json:"identity_title"`
 }
 
 type GetDriversResp struct {
