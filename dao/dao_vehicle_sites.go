@@ -9,7 +9,7 @@ import (
 )
 
 // 车辆新增站点
-func (d *Dao) InsertVehicleSites(ctx context.Context, tx *gorm.DB, m []model.VehicleSitesModel) error {
+func (d *Dao) InsertVehicleSites(ctx context.Context, tx *gorm.DB, m model.VehicleSitesModel) error {
 	log := logging.For(ctx, "func", "InsertVehicleSites",
 		zap.Any("model", m),
 	)
@@ -35,7 +35,7 @@ func (d *Dao) DeleteVehicleSites(ctx context.Context, tx *gorm.DB, vehicleId int
 	if tx == nil {
 		tx = d.db.Master(ctx).DB
 	}
-	err := tx.Where("vehicle_id = ?", vehicleId).Update(map[string]interface{}{
+	err := tx.Table(model.VehicleSitesTableName).Where("vehicle_id = ?", vehicleId).Update(map[string]interface{}{
 		"status": model.VehicleSitesStatusDeleted,
 	}).Error
 	if err != nil {

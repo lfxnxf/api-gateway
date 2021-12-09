@@ -2,6 +2,7 @@ package dao
 
 import (
 	"context"
+	"github.com/jinzhu/gorm"
 	"github.com/lfxnxf/frame/BackendPlatform/golang/logging"
 	"github.com/lfxnxf/school/api-gateway/model"
 	"go.uber.org/zap"
@@ -50,19 +51,22 @@ func (d *Dao) GetVehicleInfoById(ctx context.Context, id int64) (model.VehicleMo
 }
 
 // 新增车辆
-func (d *Dao) InsertVehicle(ctx context.Context, m model.VehicleModel) error {
+func (d *Dao) InsertVehicle(ctx context.Context, tx *gorm.DB, m model.VehicleModel) (model.VehicleModel, error) {
 	log := logging.For(ctx, "func", "InsertVehicle",
 		zap.Any("model", m),
 	)
-	err := d.db.Master(ctx).Create(&m).Error
+	if tx == nil {
+		tx = d.db.Master(ctx).DB
+	}
+	err := tx.Create(&m).Error
 	if err != nil {
 		log.Errorw("Create",
 			zap.String("err", err.Error()),
 		)
-		return err
+		return m, err
 	}
 	log.Infow("success")
-	return nil
+	return m, nil
 }
 
 // 修改车辆

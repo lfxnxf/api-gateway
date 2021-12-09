@@ -61,19 +61,16 @@ func (s *Service) SaveVehicleSites(ctx context.Context, atom *school_http.Atom, 
 	}
 
 	// 新增车辆站点
-	var modelList []model.VehicleSitesModel
 	for _, v := range req.List {
-		m := model.VehicleSitesModel{
+		err = s.dao.InsertVehicleSites(ctx, tx, model.VehicleSitesModel{
 			VehicleId: req.VehicleId,
 			SiteId:    v.SiteId,
 			Sort:      v.Sort,
+		})
+		if err != nil {
+			log.Errorw("s.dao.InsertVehicleSites, err:", zap.String("error", err.Error()))
+			return nil, err
 		}
-		modelList = append(modelList, m)
-	}
-	err = s.dao.InsertVehicleSites(ctx, tx, modelList)
-	if err != nil {
-		log.Errorw("s.dao.InsertVehicleSites, err:", zap.String("error", err.Error()))
-		return nil, err
 	}
 
 	log.Infow("success!")

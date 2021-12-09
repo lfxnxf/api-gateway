@@ -9,11 +9,21 @@ import (
 	"go.uber.org/zap"
 )
 
-func addVehicle(c *httpserver.Context) {
-	log := logging.For(c.Ctx, "func", "addVehicle")
+type DefaultShifts struct {
+	Name string `json:"name"`
+}
+var defaultShifts = []DefaultShifts{
+	DefaultShifts{Name: "早班（上学）"},
+	DefaultShifts{Name: "中班（放学）"},
+	DefaultShifts{Name: "中班（上学）"},
+	DefaultShifts{Name: "晚班（放学）"},
+}
+
+func saveVehicle(c *httpserver.Context) {
+	log := logging.For(c.Ctx, "func", "saveVehicle")
 
 	var (
-		req model.AddVehicleReq
+		req model.SaveVehicleReq
 	)
 
 	if err := school_http.Requests.Body(c.Ctx, c.Request).ParseJson(&req).Error(); err != nil {
@@ -31,9 +41,33 @@ func addVehicle(c *httpserver.Context) {
 		return
 	}
 
-	resp, err := svc.AddVehicle(c.Ctx, atom, req)
+	if req.LicensePlate == "" {
+		log.Errorw("req.LicensePlate empty")
+		c.JSONAbort(nil, school_errors.Codes.ClientError)
+		return
+	}
+
+	if req.DriverId == 0 {
+		log.Errorw("req.DriverId empty")
+		c.JSONAbort(nil, school_errors.Codes.ClientError)
+		return
+	}
+
+	if len(req.ShiftsList) <= 0 {
+		log.Errorw("req.ShiftsList empty")
+		c.JSONAbort(nil, school_errors.Codes.ClientError)
+		return
+	}
+
+	if len(req.VehicleSiteList) <= 0 {
+		log.Errorw("req.VehicleSiteList empty")
+		c.JSONAbort(nil, school_errors.Codes.ClientError)
+		return
+	}
+
+	resp, err := svc.SaveVehicle(c.Ctx, atom, req)
 	if err != nil {
-		log.Errorw("AddVehicle",
+		log.Errorw("SaveVehicle",
 			zap.String("err", err.Error()),
 		)
 		c.JSONAbort(nil, err)
@@ -67,4 +101,10 @@ func getAllVehicleInfo(c *httpserver.Context) {
 	log.Infow("success")
 
 	c.JSON(resp, nil)
+}
+
+func getDefaultShifts(c *httpserver.Context) {
+	c.JSON(map[string][]DefaultShifts{
+		"list": defaultShifts,
+	}, nil)
 }
