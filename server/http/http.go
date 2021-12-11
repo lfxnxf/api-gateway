@@ -1,12 +1,11 @@
 package http
 
 import (
+	"fmt"
 	"github.com/lfxnxf/frame/BackendPlatform/golang/logging"
 	"github.com/lfxnxf/frame/logic/inits"
 	httpserver "github.com/lfxnxf/frame/logic/inits/http/server"
 	httpplugin "github.com/lfxnxf/frame/logic/inits/plugins/http"
-	"github.com/lfxnxf/frame/school_http/server/commlib/school_errors"
-	"github.com/lfxnxf/frame/school_http/server/commlib/school_http"
 	"github.com/lfxnxf/school/api-gateway/conf"
 	"github.com/lfxnxf/school/api-gateway/error_code"
 	"github.com/lfxnxf/school/api-gateway/service"
@@ -71,12 +70,7 @@ func CheckToken(c *httpserver.Context) {
 		c.JSONAbort(nil, error_code.UnLogin)
 		return
 	}
-	atom, err := school_http.Requests.Query(c.Ctx, c.Request).Atom()
-	if err != nil {
-		c.JSONAbort(nil, school_errors.Codes.ClientError)
-		return
-	}
-	atom.Uid = user.Id
+	c.Request.URL.RawQuery = fmt.Sprintf("%suid=%d", c.Request.URL.RawQuery, user.Id)
 
 	// 刷新token
 	go func() {

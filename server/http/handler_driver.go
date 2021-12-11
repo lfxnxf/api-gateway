@@ -9,6 +9,11 @@ import (
 	"go.uber.org/zap"
 )
 
+type identityInfo struct {
+	Identity int64  `json:"identity"`
+	Title    string `json:"title"`
+}
+
 func addDriver(c *httpserver.Context) {
 	log := logging.For(c.Ctx, "func", "addDriver")
 
@@ -69,3 +74,17 @@ func getDrivers(c *httpserver.Context) {
 	c.JSON(resp, nil)
 }
 
+func getDefaultIdentity(c *httpserver.Context) {
+	var resp []identityInfo
+	resp = append(resp, identityInfo{
+		Identity: model.IdentityBoss,
+		Title:    model.GetIdentityText(model.IdentityBoss),
+	},identityInfo{
+		Identity: model.IdentityAdmin,
+		Title:    model.GetIdentityText(model.IdentityBoss),
+	},identityInfo{
+		Identity: model.IdentityDriver,
+		Title:    model.GetIdentityText(model.IdentityBoss),
+	})
+	c.JSON(resp, nil)
+}
