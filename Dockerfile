@@ -22,6 +22,8 @@ RUN go build -o api-gateway ./app/main.go
 FROM scratch
 COPY ./app/config /config
 COPY ./app/logs /logs
+RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+RUN echo 'Asia/Shanghai' >/etc/timezone
 
 # 从builder镜像中把/dist/app 拷贝到当前目录
 COPY --from=builder /docker/api-gateway /
