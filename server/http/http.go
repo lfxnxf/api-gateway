@@ -74,7 +74,7 @@ func CheckToken(c *httpserver.Context) {
 	if c.Request.URL.RawQuery != "" {
 		u = fmt.Sprintf("&%s", u)
 	}
-	c.Request.URL.RawQuery = fmt.Sprintf("%suid=%d", c.Request.URL.RawQuery, user.Id)
+	c.Request.URL.RawQuery = fmt.Sprintf("%s%s", c.Request.URL.RawQuery, fmt.Sprintf(u, user.Id))
 
 	// 刷新token
 	go func() {
