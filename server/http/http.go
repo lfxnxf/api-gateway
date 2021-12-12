@@ -70,6 +70,10 @@ func CheckToken(c *httpserver.Context) {
 		c.JSONAbort(nil, error_code.UnLogin)
 		return
 	}
+	u := "uid=%d"
+	if c.Request.URL.RawQuery == "" {
+		u = fmt.Sprintf("&%s", u)
+	}
 	c.Request.URL.RawQuery = fmt.Sprintf("%suid=%d", c.Request.URL.RawQuery, user.Id)
 
 	// 刷新token
