@@ -56,11 +56,13 @@ func Init(s *service.Service, w *ws.Ws, conf *conf.Config) {
 }
 
 func CheckToken(c *httpserver.Context) {
+	log := logging.For(c.Ctx, "func", "CheckToken")
 	path := c.Request.URL.Path
 	if utils.InStringArray(path, TokenWhitePath) {
 		return
 	}
 	token := c.Request.Header.Get("auth_token")
+	log.Infow("get token:", zap.String("token", token))
 	user, err := svc.GetUserByToken(c.Ctx, token)
 	if err != nil {
 		c.JSONAbort(nil, err)
@@ -72,6 +74,7 @@ func CheckToken(c *httpserver.Context) {
 	}
 	u := "uid=%d"
 	if c.Request.URL.RawQuery != "" {
+		log.Infow("c.Request.URL.RawQuery", zap.String("query", c.Request.URL.RawQuery))
 		u = fmt.Sprintf("&%s", u)
 	}
 	c.Request.URL.RawQuery = fmt.Sprintf("%s%s", c.Request.URL.RawQuery, fmt.Sprintf(u, user.Id))
