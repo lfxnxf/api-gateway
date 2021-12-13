@@ -81,10 +81,10 @@ func getDefaultIdentity(c *httpserver.Context) {
 		Title:    model.GetIdentityText(model.IdentityBoss),
 	}, identityInfo{
 		Identity: model.IdentityAdmin,
-		Title:    model.GetIdentityText(model.IdentityBoss),
+		Title:    model.GetIdentityText(model.IdentityAdmin),
 	}, identityInfo{
 		Identity: model.IdentityDriver,
-		Title:    model.GetIdentityText(model.IdentityBoss),
+		Title:    model.GetIdentityText(model.IdentityDriver),
 	})
 	c.JSON(map[string][]identityInfo{"list": resp}, nil)
 }
