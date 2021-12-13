@@ -33,9 +33,13 @@ func (s *Service) GetDivers(ctx context.Context, atom *school_http.Atom) (interf
 		return resp, err
 	}
 	for _, v := range drivers {
+		name := v.Name
+		if name == "" {
+			name = "创建者"
+		}
 		info := model.DriverInfo{
 			Id:            v.Id,
-			Name:          v.Name,
+			Name:          name,
 			Phone:         v.Phone,
 			Identity:      v.Identity,
 			IdentityTitle: model.GetIdentityText(v.Identity),
