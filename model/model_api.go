@@ -73,6 +73,7 @@ type SiteInfo struct {
 	Name      string `json:"name"`
 	Longitude string `json:"longitude"`
 	Latitude  string `json:"latitude"`
+	Type      int64  `json:"type"`
 }
 
 type GetSitesListResp struct {

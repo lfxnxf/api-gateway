@@ -24,8 +24,7 @@ func (d *Dao) GetAllSites(ctx context.Context, where map[string]interface{}) ([]
 		query = query.Where(fmt.Sprintf("%s = ?", k), v)
 	}
 
-	err := d.db.Slave(ctx).Table(model.SitesTableName).
-		Scan(&resp).Error
+	err := query.Scan(&resp).Error
 	if err != nil {
 		log.Errorw("Get",
 			zap.String("err", err.Error()),

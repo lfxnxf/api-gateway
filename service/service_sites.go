@@ -37,6 +37,7 @@ func (s *Service) GetSitesList(ctx context.Context, atom *school_http.Atom, req 
 			Name:      v.Name,
 			Longitude: v.Longitude,
 			Latitude:  v.Latitude,
+			Type:      v.Type,
 		}
 		resp.List = append(resp.List, info)
 	}
